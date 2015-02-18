@@ -5,8 +5,11 @@ set -e
 # Get running container's IP
 IP=`hostname --ip-address`
 
-# Use IP for self-seeding unless SEEDS already set
-SEEDS=${SEEDS:-$IP}
+# Set seeds to:
+# 1) SEEDS env var, or
+# 2) IP of linked container, or
+# 3) My own IP
+SEEDS=${SEEDS:-${CASS_PORT_9042_TCP_ADDR:-$IP}}
 
 # Set RPC to private address
 sed -i -e "s/^rpc_address.*/rpc_address: $IP/" $CASSANDRA_CONFIG/cassandra.yaml
